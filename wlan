@@ -1,0 +1,111 @@
+#!/bin/sh
+
+#Dy@Ducky 
+set -eu # -e to stop the script if something fails ... not continue the excution and -u to stop if you have an undefined variable
+set -o pipefail
+# Add some nice colors
+
+#{{{
+red(){
+	echo -e '\e[31m'$1'\e[m';
+}
+white(){
+	echo -e '\e[37m'$1'\e[m';
+}
+gs(){
+	echo -e '\e[34m'$1'\e[m';
+}
+yellow(){
+        echo -e '\e[33m'$1'\e[m';
+}
+line(){
+	white "================================================================================="
+}
+#}}}
+# Set interface in monitor mode
+monitor(){
+	iwconfig wlan${VAR} mode monitor || red "monitor mode is not set ! \n Check if your wifi card support monitor mode and packet injection"
+}
+# Set interface in managed mode
+managed(){
+	iwconfig wlan${VAR} mode managed
+}
+# Bring the interface down
+down(){
+    (ifconfig wlan${VAR} down && systemctl stop NetworkManager && airmon-ng check kill) || red "Can't bring the the wifi card down!\n $ sudo rfkill unblock wifi"
+}
+
+# Bring the interface Up
+up(){
+	ifconfig wlan${VAR} up || rfkill unblock wifi && ifconfig wlan${VAR} up
+}
+
+# Change the TX-power of the wifi card 
+tx(){
+
+	yellow "Increase wlan${VAR} by what?"
+	read -n 2 -e -p '-->: ' TX
+	checkempty $TX
+    line
+	yellow "Enter the region (US,GY,BO...)"
+	read -n 2 -e -p '-->: ' REGION
+	checkempty $REGION
+    down && iw reg set $REGION && iwconfig wlan${VAR} txpower $TX >/dev/null && up || red "Tx power is not set ! \n Try lower values (20..etc)" && exit
+}
+
+# Change the wifi card mac adress
+changemac(){
+	(macchanger -r wlan${VAR}) || (red "Can't change the mac address" ; exit 1)
+}
+
+# Check if the script is running as root
+checkroot(){
+if [[ "$(whoami)" != root ]]; then
+	  echo "Only user root can run this script."
+	    exit 1
+fi
+}
+checkempty(){
+	if [ -z $1 ];
+	then 
+		exit
+	fi
+}
+setwlan(){
+CHOICE=$1
+iw dev | grep -E "Interface " | sed "s/ Interface //"
+gs "Enter X for interface wlanX"
+read -n 1 -e -p '-->: ' VAR
+checkempty $VAR
+(down && $CHOICE && changemac && up && yellow "Alles Gut :) !" && line && iwconfig wlan${VAR} && line && macchanger -s wlan${VAR}) 
+line && gs "Do You want to increase the Tx_power of wlan${VAR} (y/n)"
+read -n 1 -e -p '-->: ' ANSWER
+case "$ANSWER" in
+	[yY])
+		tx
+		;;
+	[nN])
+		exit
+		;;
+	*)
+		red "$ANSWER is not in the args !" ; exit 1
+		;;
+esac
+}
+
+checkroot
+white "Enter 'mon' for monitor and 'man' for managed: "
+read -n 3 -e -p '-->: ' MODE
+case "$MODE" in 
+	mon)
+		white "Switching to monitor mode ..."
+		setwlan monitor
+		;;
+	man)
+		white "Switching to managed mode ..."
+		setwlan managed
+		;;
+	*)
+		exit 1
+		;;
+esac
