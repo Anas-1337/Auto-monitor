@@ -2,7 +2,7 @@
 
 Auto-Monitor is a shell script I wrote to :
 
-* Easily put the interface in `Monitor` or `Managed`
+* Easily put the interface in `Monitor` or `Managed` mode
 
 * Auto change the `mac` `address` using __macchanger__
 
