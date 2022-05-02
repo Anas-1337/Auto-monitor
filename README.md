@@ -11,8 +11,8 @@ Auto-Monitor is a shell script I wrote to :
 
 ### Installation
 
+#### Make sure the script is in your $PATH
 ```bash
-# Make sure the script is in your $PATH
 git clone https://github.com/AnasBoubechra/Auto-monitor.git
 cd Auto-Monitor
 chmod +x wlan
