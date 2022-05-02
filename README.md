@@ -9,15 +9,15 @@ Auto-Monitor is a shell script I wrote to :
 * Set the `Tx`-`power` of the wifi interface
 
 
-### Install
+### Installation
 
 ```bash
 # Make sure the script is in your $PATH
-git clone 
-cd 
+git clone https://github.com/AnasBoubechra/Auto-monitor.git
+cd Auto-Monitor
 chmod +x wlan
 ```
-#### Dependensies
+#### Dependencies
 
 * `ifconfig` (net-tools)
 * `iwconfig` (wireless_tools)
