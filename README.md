@@ -1,12 +1,9 @@
 ### Auto-Monitor
-
-Auto-Monitor is a shell script I wrote to :
+Auto-Monitor is a shell script to switch to __monitor__ if 
+the wifi card is in the __managed__ mode and vise versa.
 
 * Easily put the interface in `Monitor` or `Managed` mode
-
 * Auto change the `mac` `address` using __macchanger__
-
-* Set the `Tx`-`power` of the wifi interface
 
 
 ### Installation
@@ -16,22 +13,7 @@ Auto-Monitor is a shell script I wrote to :
 git clone https://github.com/AnasBoubechra/Auto-monitor.git
 cd Auto-monitor
 chmod +x wlan
+sudo ./wlan
 ```
 #### Dependencies
-
-* `ifconfig` (net-tools)
-* `iwconfig` (wireless_tools)
-* `aircrack`-`ng`
-* `rfkill` From (__util__-__linux__ Or __netctl__)
-* `grep`
-* `git`
-
-For Arch
-```bash
-sudo pacman -S net-tools wireless_tools aircrack-ng util-linux grep git
-```
-For Debian , Ubuntu Etc
-
-```bash
-sudo apt install net-tools wireless_tools aircrack-ng util-linux grep git
-```
+no dependencies
